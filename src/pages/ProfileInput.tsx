@@ -289,7 +289,7 @@ export function ProfileInput() {
               size="lg"
               onClick={handleSubmit}
               disabled={selectedSkills.length === 0 && extractedSkills.length === 0}
-              className="w-full"
+              className="w-full items-center"
             >
               <Sparkles className="w-5 h-5 mr-2" />
               Analyze My Fit
