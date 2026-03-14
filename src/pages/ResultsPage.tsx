@@ -61,7 +61,7 @@ export function ResultsPage() {
                 </p>
               </div>
             </div>
-            <Button variant="ghost" onClick={resetApp} className="hidden md:flex">
+            <Button variant="ghost" onClick={resetApp} className="hidden md:flex items-center">
               <RotateCcw className="w-4 h-4 mr-2" />
               Start Over
             </Button>
