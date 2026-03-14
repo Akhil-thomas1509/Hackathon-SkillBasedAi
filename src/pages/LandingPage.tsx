@@ -182,6 +182,7 @@ export function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/30">
                 <Zap className="w-8 h-8 text-white" />
               </div>
+              <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-transparent mx-auto mb-4"></div>
               <h3 className="text-lg font-bold text-white mb-2">Get AI Guidance</h3>
               <p className="text-slate-400 text-sm">
                 Receive personalized recommendations on what to learn next
