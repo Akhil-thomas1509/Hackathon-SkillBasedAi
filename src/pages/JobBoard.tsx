@@ -4,10 +4,11 @@ import { Job } from '../types';
 import { supabase } from '../lib/supabase';
 import { JobCard } from '../components/JobCard';
 import { Button } from '../components/Button';
+import { StepIndicator } from '../components/StepIndicator';
 import { ArrowLeft, Briefcase, Search } from 'lucide-react';
 
 export function JobBoard() {
-  const { setCurrentPage, setSelectedJob } = useApp();
+  const { currentPage, setCurrentPage, setSelectedJob } = useApp();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,6 +57,8 @@ export function JobBoard() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
+
+          <StepIndicator currentPage={currentPage} />
 
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30">

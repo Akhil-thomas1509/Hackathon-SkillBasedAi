@@ -4,12 +4,17 @@ export async function analyzeProfile(
   job: Job,
   profile: UserProfile
 ): Promise<AnalysisResult> {
-  const matchedSkills = profile.selectedSkills.filter((skill) =>
+  const manualSkills = profile.selectedSkills || [];
+  const extractedSkills = profile.extractedSkills || [];
+
+  const allSkills = Array.from(new Set([...manualSkills, ...extractedSkills]));
+
+  const matchedSkills = allSkills.filter((skill) =>
     job.required_skills.includes(skill)
   );
 
   const missingSkills = job.required_skills.filter(
-    (skill) => !profile.selectedSkills.includes(skill)
+    (skill) => !allSkills.includes(skill)
   );
 
   const matchScore = job.required_skills.length > 0
@@ -20,10 +25,17 @@ export async function analyzeProfile(
     job,
     matchedSkills,
     missingSkills,
-    profile
+    profile,
+    allSkills
   );
 
-  const insights = generateInsights(matchScore, matchedSkills.length, missingSkills.length);
+  const insights = generateInsights(
+    matchScore,
+    matchedSkills.length,
+    missingSkills.length,
+    extractedSkills.length,
+    manualSkills.length
+  );
 
   return {
     targetJob: job,
@@ -32,20 +44,33 @@ export async function analyzeProfile(
     missingSkills,
     recommendations,
     insights,
+    extractedSkills,
+    manualSkills,
+    allSkills,
   };
 }
 
-function generateInsights(score: number, matched: number, missing: number): string {
+function generateInsights(
+  score: number,
+  matched: number,
+  missing: number,
+  extracted: number,
+  manual: number
+): string {
+  const sourceInfo = extracted > 0
+    ? ` (${extracted} from resume, ${manual} manually selected)`
+    : '';
+
   if (score >= 80) {
-    return `Excellent fit! You possess the majority of required skills. Focus on refining the ${missing} missing skill${missing !== 1 ? 's' : ''} to become a top candidate.`;
+    return `Excellent fit! You possess the majority of required skills${sourceInfo}. Focus on refining the ${missing} missing skill${missing !== 1 ? 's' : ''} to become a top candidate.`;
   } else if (score >= 60) {
-    return `Strong foundation. You have ${matched} core skill${matched !== 1 ? 's' : ''} in place. Addressing the ${missing} missing skill${missing !== 1 ? 's' : ''} would significantly boost your candidacy.`;
+    return `Strong foundation. You have ${matched} core skill${matched !== 1 ? 's' : ''}${sourceInfo} in place. Addressing the ${missing} missing skill${missing !== 1 ? 's' : ''} would significantly boost your candidacy.`;
   } else if (score >= 40) {
-    return `Developing fit. You've built a decent base with ${matched} skill${matched !== 1 ? 's' : ''}. Strategic learning in the ${missing} gap area${missing !== 1 ? 's' : ''} will position you competitively.`;
+    return `Developing fit. You've built a decent base with ${matched} skill${matched !== 1 ? 's' : ''}${sourceInfo}. Strategic learning in the ${missing} gap area${missing !== 1 ? 's' : ''} will position you competitively.`;
   } else if (score >= 20) {
-    return `Early stage. You have ${matched} relevant skill${matched !== 1 ? 's' : ''}. Focus on building proficiency in the ${missing} missing skill${missing !== 1 ? 's' : ''} through structured learning and projects.`;
+    return `Early stage. You have ${matched} relevant skill${matched !== 1 ? 's' : ''}${sourceInfo}. Focus on building proficiency in the ${missing} missing skill${missing !== 1 ? 's' : ''} through structured learning and projects.`;
   } else {
-    return `Foundation building needed. This role requires significant skill development. Consider starting with ${missing} fundamental skill${missing !== 1 ? 's' : ''} and building practical projects.`;
+    return `Foundation building needed. This role requires significant skill development. Consider starting with the ${missing} fundamental skill${missing !== 1 ? 's' : ''} and building practical projects.`;
   }
 }
 
@@ -53,7 +78,8 @@ async function generateRecommendations(
   job: Job,
   matchedSkills: string[],
   missingSkills: string[],
-  profile: UserProfile
+  profile: UserProfile,
+  _allSkills: string[]
 ): Promise<string[]> {
   try {
     const response = await fetch(

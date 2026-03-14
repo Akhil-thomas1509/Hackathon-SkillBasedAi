@@ -12,6 +12,8 @@ export interface UserProfile {
   selectedSkills: string[];
   resumeSummary: string;
   strengths?: string;
+  resumeText?: string;
+  extractedSkills?: string[];
 }
 
 export interface AnalysisResult {
@@ -21,6 +23,9 @@ export interface AnalysisResult {
   missingSkills: string[];
   recommendations: string[];
   insights: string;
+  extractedSkills: string[];
+  manualSkills: string[];
+  allSkills: string[];
 }
 
 export type Page = 'landing' | 'jobs' | 'profile' | 'loading' | 'results';

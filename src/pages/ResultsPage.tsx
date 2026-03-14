@@ -1,6 +1,7 @@
 import { useApp } from '../context/AppContext';
 import { Button } from '../components/Button';
 import { SkillBadge } from '../components/SkillBadge';
+import { StepIndicator } from '../components/StepIndicator';
 import {
   TrendingUp,
   CheckCircle2,
@@ -8,6 +9,7 @@ import {
   Lightbulb,
   RotateCcw,
   Target,
+  Sparkles,
 } from 'lucide-react';
 
 export function ResultsPage() {
@@ -18,7 +20,7 @@ export function ResultsPage() {
     return null;
   }
 
-  const { targetJob, matchScore, matchedSkills, missingSkills, recommendations, insights } =
+  const { targetJob, matchScore, matchedSkills, missingSkills, recommendations, insights, extractedSkills, manualSkills } =
     analysisResult;
 
   const getScoreColor = (score: number) => {
@@ -44,6 +46,8 @@ export function ResultsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 animate-in">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <StepIndicator currentPage="results" />
+
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
@@ -165,6 +169,31 @@ export function ResultsPage() {
             </div>
           </div>
         </div>
+
+        {extractedSkills && extractedSkills.length > 0 && (
+          <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-2xl p-6 mb-6">
+            <div className="flex items-start gap-3 mb-4">
+              <Sparkles className="w-5 h-5 text-cyan-400 mt-0.5" />
+              <div>
+                <h3 className="text-lg font-bold text-white">Resume Analysis</h3>
+                <p className="text-sm text-slate-400 mt-1">
+                  We detected {extractedSkills.length} technical skill{extractedSkills.length !== 1 ? 's' : ''} from your resume
+                  {manualSkills && manualSkills.length > 0 && `, plus ${manualSkills.length} manually selected skill${manualSkills.length !== 1 ? 's' : ''}`}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {extractedSkills.map((skill) => (
+                <span
+                  key={skill}
+                  className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-slate-800/30 border border-slate-700 rounded-2xl p-6">
