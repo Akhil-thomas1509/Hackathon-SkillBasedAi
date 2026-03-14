@@ -20,7 +20,7 @@ export function ResultsPage() {
     return null;
   }
 
-  const { targetJob, matchScore, matchedSkills, missingSkills, recommendations, insights, extractedSkills, manualSkills } =
+  const { targetJob, matchScore, matchedSkills, missingSkills, recommendations, insights, extractedSkills, manualSkills, scoreBreakdown } =
     analysisResult;
 
   const getScoreColor = (score: number) => {
@@ -149,6 +149,43 @@ export function ResultsPage() {
                 <p className="text-slate-300 leading-relaxed">{insights}</p>
               </div>
             </div>
+
+            {scoreBreakdown && (
+              <details className="mt-4 bg-slate-800/30 rounded-xl border border-slate-700">
+                <summary className="p-4 cursor-pointer hover:bg-slate-800/50 transition-colors rounded-xl">
+                  <span className="text-sm font-medium text-slate-300">View Score Breakdown</span>
+                </summary>
+                <div className="px-4 pb-4 space-y-3">
+                  <p className="text-xs text-slate-500 mb-3">
+                    This score reflects required skills, category coverage, resume evidence, and critical skill gaps.
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-400">Required Skills Match</span>
+                      <span className="text-sm font-semibold text-white">{scoreBreakdown.requiredSkillsScore}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-400">Category Coverage</span>
+                      <span className="text-sm font-semibold text-white">{scoreBreakdown.categoryCoverageScore}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-400">Resume Evidence</span>
+                      <span className="text-sm font-semibold text-white">{scoreBreakdown.resumeEvidenceScore}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-400">Bonus Skills</span>
+                      <span className="text-sm font-semibold text-white">{scoreBreakdown.bonusSkillsScore}%</span>
+                    </div>
+                    {scoreBreakdown.criticalSkillPenalty > 0 && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-amber-400">Critical Skill Gaps</span>
+                        <span className="text-sm font-semibold text-amber-400">-{scoreBreakdown.criticalSkillPenalty}%</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </details>
+            )}
           </div>
 
           <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">

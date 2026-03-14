@@ -16,6 +16,15 @@ export interface UserProfile {
   extractedSkills?: string[];
 }
 
+export interface ScoreBreakdown {
+  totalScore: number;
+  requiredSkillsScore: number;
+  categoryCoverageScore: number;
+  resumeEvidenceScore: number;
+  bonusSkillsScore: number;
+  criticalSkillPenalty: number;
+}
+
 export interface AnalysisResult {
   targetJob: Job;
   matchScore: number;
@@ -26,6 +35,7 @@ export interface AnalysisResult {
   extractedSkills: string[];
   manualSkills: string[];
   allSkills: string[];
+  scoreBreakdown?: ScoreBreakdown;
 }
 
 export type Page = 'landing' | 'jobs' | 'profile' | 'loading' | 'results';
