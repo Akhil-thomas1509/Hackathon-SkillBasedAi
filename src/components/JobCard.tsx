@@ -17,42 +17,46 @@ export function JobCard({ job, onSelect }: JobCardProps) {
   };
 
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:border-slate-600 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+    <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/30 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300 hover:-translate-y-2 group cursor-pointer">
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+        <div className="flex-1">
+          <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
             {job.title}
           </h3>
-          <div className="flex gap-2">
-            <span className={`px-3 py-1 rounded-lg text-xs font-semibold border ${categoryColors[job.category] || 'bg-slate-700 text-slate-300'}`}>
+          <div className="flex flex-wrap gap-2">
+            <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${categoryColors[job.category] || 'bg-slate-700 text-slate-300'}`}>
               {job.category}
             </span>
-            <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600">
+            <span className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700/50 text-slate-300 border border-slate-600 transition-all">
               {job.difficulty}
             </span>
           </div>
         </div>
       </div>
 
-      <p className="text-slate-400 mb-4 leading-relaxed">
+      <p className="text-slate-400 mb-5 leading-relaxed text-sm">
         {job.description}
       </p>
 
-      <div className="mb-4">
-        <p className="text-sm text-slate-500 mb-2 font-medium">Required Skills</p>
+      <div className="mb-5">
+        <p className="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-wider">Required Skills</p>
         <div className="flex flex-wrap gap-2">
-          {job.required_skills.slice(0, 4).map((skill) => (
+          {job.required_skills.slice(0, 5).map((skill) => (
             <SkillBadge key={skill} skill={skill} />
           ))}
-          {job.required_skills.length > 4 && (
-            <span className="text-sm text-slate-500 self-center">
-              +{job.required_skills.length - 4} more
+          {job.required_skills.length > 5 && (
+            <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 bg-slate-700/30">
+              +{job.required_skills.length - 5} more
             </span>
           )}
         </div>
       </div>
 
-      <Button onClick={onSelect} variant="primary" className="w-full">
+      <Button
+        onClick={onSelect}
+        variant="primary"
+        className="w-full group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-cyan-500/30 transition-all"
+      >
         Select Role
       </Button>
     </div>

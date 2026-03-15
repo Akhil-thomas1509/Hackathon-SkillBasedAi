@@ -9,12 +9,12 @@ export function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 animate-in">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <header className="py-6">
+        <header className="py-6 lg:py-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-11 h-11 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/30">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white">SkillBridge AI</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold text-white">SkillBridge AI</h1>
           </div>
         </header>
 
@@ -41,8 +41,9 @@ export function LandingPage() {
                 <Button
                   size="lg"
                   onClick={() => setCurrentPage('jobs')}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
                 >
+                  <Sparkles className="w-5 h-5 mr-2" />
                   Start Analysis
                 </Button>
                 <Button
@@ -51,7 +52,7 @@ export function LandingPage() {
                   onClick={() => {
                     document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto hover:scale-105 transition-all"
                 >
                   See How It Works
                 </Button>

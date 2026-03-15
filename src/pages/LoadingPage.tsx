@@ -38,28 +38,28 @@ export function LoadingPage() {
   const CurrentIcon = LOADING_MESSAGES[messageIndex].icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-      <div className="text-center">
-        <div className="relative w-24 h-24 mx-auto mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4">
+      <div className="text-center max-w-lg">
+        <div className="relative w-28 h-28 mx-auto mb-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl animate-pulse shadow-2xl shadow-cyan-500/40"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl animate-ping opacity-20"></div>
           <div className="relative w-full h-full flex items-center justify-center">
-            <CurrentIcon className="w-12 h-12 text-white animate-bounce" />
+            <CurrentIcon className="w-14 h-14 text-white animate-bounce" />
           </div>
         </div>
 
-        <div className="space-y-2 mb-8">
-          <h2 className="text-3xl font-bold text-white">
+        <div className="space-y-4 mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-white animate-in">
             {LOADING_MESSAGES[messageIndex].text}
           </h2>
           <div className="flex gap-2 justify-center">
             {LOADING_MESSAGES.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full transition-all duration-500 ${
                   index === messageIndex
-                    ? 'bg-cyan-400 w-8'
-                    : 'bg-slate-700'
+                    ? 'bg-cyan-400 w-10 shadow-lg shadow-cyan-400/50'
+                    : 'bg-slate-700 w-2'
                 }`}
               ></div>
             ))}
@@ -67,9 +67,10 @@ export function LoadingPage() {
         </div>
 
         <div className="max-w-md mx-auto">
-          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full animate-[loading_4.5s_ease-in-out]"></div>
+          <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+            <div className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-blue-600 rounded-full animate-[loading_4.5s_ease-in-out] shadow-lg shadow-cyan-500/50"></div>
           </div>
+          <p className="text-sm text-slate-400 mt-4">This should only take a moment...</p>
         </div>
       </div>
 

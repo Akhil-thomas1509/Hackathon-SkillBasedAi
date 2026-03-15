@@ -98,31 +98,41 @@ export function Chatbot() {
   return (
     <>
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full shadow-lg shadow-cyan-500/30 flex items-center justify-center hover:scale-110 transition-transform duration-200 z-50 group"
-          aria-label="Open chat"
-        >
-          <MessageCircle className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
-        </button>
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 group">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full shadow-2xl shadow-cyan-500/40 flex items-center justify-center hover:scale-110 hover:shadow-cyan-500/60 transition-all duration-300 active:scale-95"
+            aria-label="Open chat assistant"
+          >
+            <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:scale-110 transition-transform" />
+            <div className="absolute -top-1 -right-1 w-3.5 h-3.5 md:w-4 md:h-4 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
+          </button>
+          <div className="hidden md:block absolute bottom-20 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
+              <p className="text-sm text-slate-300 font-medium">Need help? Ask me anything!</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-3rem)] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-in">
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 flex items-center justify-between">
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-full max-w-md sm:w-96 h-[calc(100vh-2rem)] sm:h-[600px] max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-scale-in">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-5 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="w-11 h-11 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-white">SkillBridge Assistant</h3>
-                <p className="text-xs text-cyan-100">Always here to help</p>
+                <h3 className="font-bold text-white text-lg">SkillBridge AI</h3>
+                <p className="text-xs text-cyan-100 flex items-center gap-1">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                  Online and ready to help
+                </p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 bg-white/20 rounded-lg hover:bg-white/30 transition-colors flex items-center justify-center"
+              className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 hover:scale-110 transition-all flex items-center justify-center"
               aria-label="Close chat"
             >
               <X className="w-5 h-5 text-white" />
@@ -148,13 +158,14 @@ export function Chatbot() {
             ))}
 
             {messages.length === 1 && (
-              <div className="space-y-2">
-                <p className="text-xs text-slate-500 text-center mb-3">Quick questions:</p>
-                {QUICK_QUESTIONS.map((question) => (
+              <div className="space-y-2 animate-in">
+                <p className="text-xs text-slate-500 text-center mb-3 font-medium">💡 Quick questions to get started:</p>
+                {QUICK_QUESTIONS.map((question, index) => (
                   <button
                     key={question}
                     onClick={() => handleSend(question)}
-                    className="w-full text-left px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-300 transition-colors"
+                    className="w-full text-left px-4 py-3 bg-gradient-to-br from-slate-800 to-slate-800/50 hover:from-slate-700 hover:to-slate-700/50 border border-slate-700 hover:border-cyan-500/50 rounded-xl text-sm text-slate-300 hover:text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-lg animate-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     {question}
                   </button>

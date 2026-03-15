@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Button } from '../components/Button';
 import { SkillBadge } from '../components/SkillBadge';
 import { StepIndicator } from '../components/StepIndicator';
-import { ArrowLeft, User, Sparkles, Upload, FileText, Zap } from 'lucide-react';
+import { ArrowLeft, User, Sparkles, Upload, FileText, Zap, CheckCircle2, Loader2 } from 'lucide-react';
 import { extractSkillsFromResume, generateSampleResume } from '../lib/resumeParser';
 
 const SKILL_CATEGORIES = {
@@ -25,6 +25,9 @@ export function ProfileInput() {
   const [resumeText, setResumeText] = useState(userProfile.resumeText || '');
   const [extractedSkills, setExtractedSkills] = useState<string[]>(userProfile.extractedSkills || []);
   const [showExtractedSkills, setShowExtractedSkills] = useState(false);
+  const [uploadMode, setUploadMode] = useState<'upload' | 'paste'>('upload');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [uploadStage, setUploadStage] = useState<'idle' | 'uploading' | 'analyzing' | 'extracting' | 'completed'>('idle');
 
   if (!selectedJob) {
     setCurrentPage('jobs');
@@ -39,40 +42,86 @@ export function ProfileInput() {
     );
   }
 
-  function handleResumeExtract() {
+  async function handleResumeExtract() {
     if (!resumeText.trim()) return;
 
+    setIsProcessing(true);
+    setUploadStage('analyzing');
+
+    await new Promise(resolve => setTimeout(resolve, 600));
+    setUploadStage('extracting');
+
+    await new Promise(resolve => setTimeout(resolve, 800));
     const detected = extractSkillsFromResume(resumeText);
     setExtractedSkills(detected);
+
+    setUploadStage('completed');
+    await new Promise(resolve => setTimeout(resolve, 400));
+
     setShowExtractedSkills(true);
+    setIsProcessing(false);
+    setUploadStage('idle');
 
     const mergedSkills = Array.from(new Set([...selectedSkills, ...detected]));
     setSelectedSkills(mergedSkills);
   }
 
-  function handleLoadSample() {
+  async function handleLoadSample() {
+    setIsProcessing(true);
+    setUploadStage('uploading');
+
     const sample = generateSampleResume();
     setResumeText(sample);
+
+    await new Promise(resolve => setTimeout(resolve, 400));
+    setUploadStage('analyzing');
+
+    await new Promise(resolve => setTimeout(resolve, 600));
+    setUploadStage('extracting');
+
+    await new Promise(resolve => setTimeout(resolve, 800));
     const detected = extractSkillsFromResume(sample);
     setExtractedSkills(detected);
+
+    setUploadStage('completed');
+    await new Promise(resolve => setTimeout(resolve, 400));
+
     setShowExtractedSkills(true);
+    setIsProcessing(false);
+    setUploadStage('idle');
 
     const mergedSkills = Array.from(new Set([...selectedSkills, ...detected]));
     setSelectedSkills(mergedSkills);
   }
 
-  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    setIsProcessing(true);
+    setUploadStage('uploading');
+
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const text = e.target?.result as string;
       setResumeText(text);
 
+      await new Promise(resolve => setTimeout(resolve, 600));
+      setUploadStage('analyzing');
+
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setUploadStage('extracting');
+
+      await new Promise(resolve => setTimeout(resolve, 800));
       const detected = extractSkillsFromResume(text);
       setExtractedSkills(detected);
+
+      setUploadStage('completed');
+      await new Promise(resolve => setTimeout(resolve, 400));
+
       setShowExtractedSkills(true);
+      setIsProcessing(false);
+      setUploadStage('idle');
 
       const mergedSkills = Array.from(new Set([...selectedSkills, ...detected]));
       setSelectedSkills(mergedSkills);
@@ -168,77 +217,148 @@ export function ProfileInput() {
                 </div>
               </div>
 
+              <div className="flex gap-2 mb-4">
+                <button
+                  onClick={() => setUploadMode('upload')}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    uploadMode === 'upload'
+                      ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
+                      : 'bg-slate-800/50 text-slate-400 border border-slate-700 hover:bg-slate-800 hover:text-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Upload className="w-4 h-4" />
+                    Upload File
+                  </div>
+                </button>
+                <button
+                  onClick={() => setUploadMode('paste')}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    uploadMode === 'paste'
+                      ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/30'
+                      : 'bg-slate-800/50 text-slate-400 border border-slate-700 hover:bg-slate-800 hover:text-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Paste Resume
+                  </div>
+                </button>
+              </div>
+
               <div className="space-y-4">
-                <div className="relative">
-                  <label className="flex flex-col items-center px-6 py-8 bg-slate-800/50 border-2 border-dashed border-slate-600 rounded-xl cursor-pointer hover:border-cyan-500 hover:bg-slate-800/70 transition-all duration-200 group">
-                    <FileText className="w-12 h-12 text-slate-500 group-hover:text-cyan-400 transition-colors mb-3" />
-                    <span className="text-sm font-medium text-slate-300 group-hover:text-cyan-400 transition-colors mb-1">
-                      Click to upload resume
-                    </span>
-                    <span className="text-xs text-slate-500">or drag and drop (.txt, .pdf, .doc)</span>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept=".txt,.pdf,.doc,.docx"
-                      onChange={handleFileUpload}
-                    />
-                  </label>
-                </div>
+                {uploadMode === 'upload' ? (
+                  <>
+                    <div className="relative">
+                      <label className="flex flex-col items-center px-6 py-10 bg-slate-800/50 border-2 border-dashed border-slate-600 rounded-xl cursor-pointer hover:border-cyan-500 hover:bg-slate-800/70 hover:scale-[1.01] transition-all duration-200 group">
+                        <FileText className="w-14 h-14 text-slate-500 group-hover:text-cyan-400 transition-all duration-200 group-hover:scale-110 mb-4" />
+                        <span className="text-base font-semibold text-slate-300 group-hover:text-cyan-400 transition-colors mb-2">
+                          Click to upload resume
+                        </span>
+                        <span className="text-sm text-slate-500">Supports .txt, .pdf, .doc, .docx</span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept=".txt,.pdf,.doc,.docx"
+                          onChange={handleFileUpload}
+                          disabled={isProcessing}
+                        />
+                      </label>
+                    </div>
 
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-700"></div>
+                    <div className="text-center">
+                      <Button
+                        variant="ghost"
+                        onClick={handleLoadSample}
+                        disabled={isProcessing}
+                        size="sm"
+                      >
+                        Try Sample Resume
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <textarea
+                        value={resumeText}
+                        onChange={(e) => setResumeText(e.target.value)}
+                        placeholder="Paste your complete resume here (education, skills, experience, projects)..."
+                        rows={8}
+                        disabled={isProcessing}
+                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none text-sm"
+                      />
+                    </div>
+
+                    <Button
+                      variant="secondary"
+                      onClick={handleResumeExtract}
+                      disabled={!resumeText.trim() || isProcessing}
+                      className="w-full items-center"
+                    >
+                      <Zap className="w-4 h-4 mr-2" />
+                      <span>Extract Skills from Resume</span>
+                    </Button>
+                  </>
+                )}
+
+                {isProcessing && (
+                  <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />
+                      <div>
+                        <p className="text-sm font-semibold text-cyan-400">
+                          {uploadStage === 'uploading' && 'Uploading resume...'}
+                          {uploadStage === 'analyzing' && 'Analyzing your resume...'}
+                          {uploadStage === 'extracting' && 'Extracting skills...'}
+                          {uploadStage === 'completed' && 'Complete!'}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-0.5">This will only take a moment</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500"
+                        style={{
+                          width: uploadStage === 'uploading' ? '25%' :
+                                 uploadStage === 'analyzing' ? '50%' :
+                                 uploadStage === 'extracting' ? '75%' :
+                                 uploadStage === 'completed' ? '100%' : '0%'
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-slate-900 text-slate-500">or paste your resume</span>
-                  </div>
-                </div>
+                )}
 
-                <div>
-                  <textarea
-                    value={resumeText}
-                    onChange={(e) => setResumeText(e.target.value)}
-                    placeholder="Paste your complete resume here (education, skills, experience, projects)..."
-                    rows={6}
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors resize-none text-sm"
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    variant="secondary"
-                    onClick={handleResumeExtract}
-                    disabled={!resumeText.trim()}
-                    className="flex-1 items-center align-center"
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    <span>Extract Skills</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={handleLoadSample}
-                    className="flex-1"
-                  >
-                    Load Sample Resume
-                  </Button>
-                </div>
-
-                {showExtractedSkills && extractedSkills.length > 0 && (
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      <p className="text-sm font-semibold text-emerald-400">
-                        Detected {extractedSkills.length} skill{extractedSkills.length !== 1 ? 's' : ''} from your resume
-                      </p>
+                {showExtractedSkills && extractedSkills.length > 0 && !isProcessing && (
+                  <div className="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/30 rounded-xl p-5 animate-in">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="text-base font-bold text-emerald-400">
+                          {extractedSkills.length} skill{extractedSkills.length !== 1 ? 's' : ''} detected
+                        </p>
+                        <p className="text-xs text-slate-400 mt-0.5">Successfully extracted from your resume</p>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {extractedSkills.map((skill) => (
-                        <SkillBadge key={skill} skill={skill} variant="matched" />
+                        <span
+                          key={skill}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors"
+                        >
+                          {skill}
+                        </span>
                       ))}
                     </div>
-                    <p className="text-xs text-emerald-400/80 mt-3">
-                      These skills have been automatically added to your profile
-                    </p>
+                    <div className="mt-4 pt-4 border-t border-emerald-500/20">
+                      <p className="text-xs text-emerald-400/80 flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        These skills have been automatically added to your profile
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -277,11 +397,19 @@ export function ProfileInput() {
               </div>
             </div>
 
-            {selectedSkills.length === 0 && !showExtractedSkills && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-4">
-                <p className="text-amber-400 text-sm text-center">
-                  Please select skills manually or upload your resume to continue
-                </p>
+            {selectedSkills.length === 0 && extractedSkills.length === 0 && (
+              <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-xl p-5 mb-4 animate-in">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-amber-400 font-semibold mb-1">No skills selected yet</p>
+                    <p className="text-sm text-slate-400">
+                      Select skills manually from the categories above, or upload your resume to automatically extract your skills.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
