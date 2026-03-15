@@ -207,7 +207,7 @@ export function LandingPage() {
         </section>
 
         <footer className="py-12 text-center text-slate-500 text-sm">
-          <p>&copy; 2024 SkillBridge AI. Built for students, by students.</p>
+          <p>&copy; 2026 SkillBridge AI. Built for students, by students.</p>
         </footer>
       </div>
     </div>
