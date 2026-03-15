@@ -212,7 +212,7 @@ export function ProfileInput() {
                     className="flex-1 items-center"
                   >
                     <Zap className="w-4 h-4 mr-2" />
-                    Extract Skills
+                    <span>Extract Skills</span>
                   </Button>
                   <Button
                     variant="ghost"
