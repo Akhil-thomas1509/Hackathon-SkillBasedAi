@@ -209,7 +209,7 @@ export function ProfileInput() {
                     variant="secondary"
                     onClick={handleResumeExtract}
                     disabled={!resumeText.trim()}
-                    className="flex-1 items-center"
+                    className="flex-1 items-center align-center"
                   >
                     <Zap className="w-4 h-4 mr-2" />
                     <span>Extract Skills</span>
